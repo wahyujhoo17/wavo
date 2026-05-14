@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Code2, ShieldCheck, ChevronDown, Check, Github as GithubIcon } from 'lucide-react';
+import { Code2, ShieldCheck, ChevronDown, Check, Github as GithubIcon, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 const Github = ({ size = 18, ...props }: { size?: number; [key: string]: any }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -32,15 +32,27 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any; title: str
 );
 
 export default function RegisterPage() {
+  const [showPass, setShowPass] = React.useState(false);
+  const [showConfirmPass, setShowConfirmPass] = React.useState(false);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans">
-      <div className="w-full max-w-[1100px] h-[780px] flex rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl shadow-black/50 mx-6">
+    <main className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans py-12 md:py-20 relative">
+      <div className="w-full max-w-[1100px] min-h-[600px] lg:h-[850px] flex flex-col lg:flex-row rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl shadow-black/50 mx-4 md:mx-6 z-10">
         
         {/* Left Side: Brand Section */}
-        <div className="hidden lg:flex w-[45%] bg-[#0f0f12] p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex w-[45%] bg-[#14141a] p-8 md:p-12 flex-col justify-between relative overflow-hidden">
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-20">
-              <span className="text-xl font-bold text-white tracking-tight">Wavo API</span>
+            <div className="mb-20">
+              <div className="relative w-[150px] h-[40px]">
+                <Image 
+                  src="/img/logo/fulllogo.png" 
+                  alt="Wavo Logo" 
+                  fill
+                  sizes="150px"
+                  priority
+                  className="object-contain"
+                />
+              </div>
             </div>
 
             <h1 className="text-5xl font-bold text-white mb-6 leading-[1.1] tracking-tighter">
@@ -64,28 +76,14 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="flex -space-x-3">
-              {[1,2,3].map(i => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0f0f12] bg-white/10 overflow-hidden">
-                  <Image 
-                    src={`https://i.pravatar.cc/100?img=${i+10}`} 
-                    alt="User" 
-                    width={32} 
-                    height={32} 
-                  />
-                </div>
-              ))}
-            </div>
-            <span className="text-xs font-bold text-on-surface-variant/40 tracking-tight uppercase">Joined by 10k+ developers globally</span>
-          </div>
+
 
           {/* Background Decor */}
           <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-transparent"></div>
         </div>
 
         {/* Right Side: Register Form */}
-        <div className="w-full lg:w-[55%] bg-[#14141a] p-12 overflow-y-auto custom-scrollbar">
+        <div className="w-full lg:w-[55%] bg-[#0f0f12] p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col justify-center">
           <div className="max-w-[420px] mx-auto">
             <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Create an account</h1>
             <p className="text-on-surface-variant/60 text-[15px] mb-8 font-medium">
@@ -108,7 +106,7 @@ export default function RegisterPage() {
                 <div className="w-full border-t border-white/5"></div>
               </div>
               <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant/40">
-                <span className="bg-[#14141a] px-4">Or continue with email</span>
+                <span className="bg-[#0f0f12] px-4">Or continue with email</span>
               </div>
             </div>
 
@@ -123,7 +121,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Work Email</label>
+                <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Email</label>
                 <input 
                   type="email" 
                   placeholder="ada@devos.io"
@@ -135,26 +133,35 @@ export default function RegisterPage() {
                 <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Password</label>
                 <div className="relative">
                   <input 
-                    type="password" 
+                    type={showPass ? "text" : "password"} 
                     placeholder="••••••••"
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/40 transition-all font-medium"
                   />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/30">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/30 hover:text-white transition-colors"
+                  >
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Developer Role</label>
+                <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Confirm Password</label>
                 <div className="relative">
-                  <select className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/40 transition-all font-medium appearance-none">
-                    <option>Backend Engineer</option>
-                    <option>Frontend Engineer</option>
-                    <option>Full Stack Developer</option>
-                    <option>DevOps / SRE</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 pointer-events-none" size={16} />
+                  <input 
+                    type={showConfirmPass ? "text" : "password"} 
+                    placeholder="••••••••"
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/40 transition-all font-medium"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowConfirmPass(!showConfirmPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/30 hover:text-white transition-colors"
+                  >
+                    {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
 
@@ -165,12 +172,13 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              <button className="w-full bg-[#c6b4ff] text-background py-4 rounded-xl font-bold text-sm hover:bg-[#b5a0f8] transition-all shadow-lg shadow-[#c6b4ff]/10 mt-2">
+              <button className="w-full bg-primary/20 text-primary py-4 rounded-xl font-bold text-sm hover:bg-primary/30 transition-all flex items-center justify-center gap-2 group mt-2">
                 Create Developer Account
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
 
-            <div className="mt-8 text-center">
+            <div className="mt-4 text-center">
               <p className="text-xs font-medium text-on-surface-variant/40">
                 Already have an account? <Link href="/login" className="text-white hover:text-primary font-bold">Sign In</Link>
               </p>

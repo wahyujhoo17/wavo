@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, ArrowRight, Github as GithubIcon } from 'lucide-react';
+import { Mail, ArrowRight, Github as GithubIcon, Eye, EyeOff } from 'lucide-react';
 
 const Github = ({ size = 18, ...props }: { size?: number; [key: string]: any }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -18,20 +18,26 @@ const GoogleIcon = () => (
 );
 
 export default function LoginPage() {
+  const [showPass, setShowPass] = React.useState(false);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans">
-      <div className="w-full max-w-[1100px] h-[720px] flex rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl shadow-black/50 mx-6">
+    <main className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans py-12 md:py-20 relative">
+      <div className="w-full max-w-[1100px] min-h-[600px] lg:h-[750px] flex flex-col lg:flex-row rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl shadow-black/50 mx-4 md:mx-6 z-10">
         
         {/* Left Side: Login Form */}
-        <div className="w-full lg:w-1/2 bg-[#0f0f12] p-12 flex flex-col justify-between">
+        <div className="w-full lg:w-1/2 bg-[#0f0f12] p-8 md:p-12 flex flex-col justify-center">
           <div>
-            <div className="flex items-center gap-2 mb-12">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-current">
-                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-4H6V8h12v4z"/>
-                </svg>
+            <div className="mb-12">
+              <div className="relative w-[150px] h-[40px]">
+                <Image 
+                  src="/img/logo/fulllogo.png" 
+                  alt="Wavo Logo" 
+                  fill
+                  sizes="150px"
+                  priority
+                  className="object-contain"
+                />
               </div>
-              <span className="text-xl font-bold text-white tracking-tight">Wavo API</span>
             </div>
 
             <h1 className="text-3xl font-bold text-white mb-3">Welcome back</h1>
@@ -75,10 +81,17 @@ export default function LoginPage() {
                   <Link href="#" className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest hover:text-primary transition-colors">Forgot Password?</Link>
                 </div>
                 <input 
-                  type="password" 
+                  type={showPass ? "text" : "password"} 
                   placeholder="••••••••"
                   className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/40 transition-all"
                 />
+                <button 
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-4 bottom-3.5 text-on-surface-variant/30 hover:text-white transition-colors"
+                >
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
 
               <div className="flex items-center gap-3 px-1 py-1">
@@ -93,7 +106,7 @@ export default function LoginPage() {
             </form>
           </div>
 
-          <div className="flex justify-between items-center text-[11px] font-medium text-on-surface-variant/40">
+          <div className="flex justify-center items-center text-[11px] font-medium text-on-surface-variant/40 mt-4">
             <div>
               New to Wavo? <Link href="/register" className="text-white hover:text-primary font-bold">Create an account</Link>
             </div>
@@ -148,9 +161,9 @@ export default function LoginPage() {
 
       </div>
 
-      <div className="absolute bottom-8 w-full max-w-[1100px] flex justify-between items-center px-10 text-[11px] font-medium text-on-surface-variant/30 uppercase tracking-widest">
+      <div className="absolute bottom-4 md:bottom-8 w-full max-w-[1100px] flex flex-col md:flex-row justify-between items-center gap-4 px-6 md:px-10 text-[10px] md:text-[11px] font-medium text-on-surface-variant/30 uppercase tracking-widest text-center">
         <span>© 2026 Wavo WhatsApp. Built for developers.</span>
-        <div className="flex gap-6">
+        <div className="flex gap-4 md:gap-6">
           <Link href="#" className="hover:text-primary transition-colors">Documentation</Link>
           <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
         </div>
