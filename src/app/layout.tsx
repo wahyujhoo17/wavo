@@ -4,7 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wavo WhatsApp API | The WhatsApp API Built for Developers",
+  title: "Wavo WhatsApp API",
   description: "Open-source, high-throughput, and easy to integrate WhatsApp API platform.",
   icons: {
     icon: "/img/logo/logo.png",

@@ -177,18 +177,9 @@ export default function DashboardLayout({
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#0a0a0c]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="min-h-full"
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+          <div className="min-h-full">
+            {children}
+          </div>
         </div>
       </main>
       
