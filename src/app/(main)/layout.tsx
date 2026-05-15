@@ -20,7 +20,8 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Plus
+  Plus,
+  CheckCircle2
 } from 'lucide-react';
 
 const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
@@ -73,6 +74,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMinimized, setIsMinimized] = React.useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
 
   return (
     <div className="flex h-screen bg-[#0a0a0c] text-white overflow-hidden font-sans">
@@ -158,9 +160,9 @@ export default function DashboardLayout({
       </motion.aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col relative z-10 overflow-hidden">
+      <main className="flex-1 flex flex-col relative z-0 overflow-hidden">
         {/* Top Header */}
-        <header className="h-[72px] border-b border-white/[0.05] flex items-center justify-between px-8 shrink-0 bg-[#0a0a0c]/80 backdrop-blur-xl">
+        <header className="h-[72px] border-b border-white/[0.05] flex items-center justify-between px-8 shrink-0 bg-[#0a0a0c]/80 backdrop-blur-xl relative z-[40]">
           {/* Left Navigation */}
           <div className="flex items-center gap-8">
             <button 
@@ -196,10 +198,66 @@ export default function DashboardLayout({
 
             {/* Icons */}
             <div className="flex items-center gap-4">
-              <button className="p-2 text-[#8e8e93] hover:text-white transition-colors relative">
-                <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-[#0a0a0c]" />
-              </button>
+              {/* Notification Dropdown */}
+              <div className="relative">
+                <button 
+                  onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                  className={`p-2 transition-colors relative rounded-lg ${isNotificationOpen ? 'bg-white/10 text-white' : 'text-[#8e8e93] hover:text-white'}`}
+                >
+                  <Bell size={20} />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-[#0a0a0c]" />
+                </button>
+
+                <AnimatePresence>
+                  {isNotificationOpen && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setIsNotificationOpen(false)}
+                      />
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-[380px] bg-[#1c1c1e] border border-white/10 rounded-[24px] shadow-2xl z-50 overflow-hidden"
+                      >
+                        <div className="p-5 border-b border-white/5 flex items-center justify-between">
+                          <h3 className="text-[16px] font-bold text-white">Notifications</h3>
+                          <button className="text-[12px] font-bold text-primary hover:opacity-80 transition-opacity">Mark all as read</button>
+                        </div>
+                        <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                          {[
+                            { title: 'New Message Received', desc: 'Marketing Bot received a message from +123456789', time: '2 mins ago', type: 'info', icon: WhatsAppIcon },
+                            { title: 'Webhook Delivery Failed', desc: 'Endpoint https://api.example.com/webhook returned 500', time: '15 mins ago', type: 'error', icon: Webhook },
+                            { title: 'Service Connected', desc: 'Support Channel is now active and ready', time: '1 hour ago', type: 'success', icon: CheckCircle2 }
+                          ].map((item, i) => (
+                            <div key={i} className="p-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer group">
+                              <div className="flex gap-4">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                                  item.type === 'error' ? 'bg-[#FF3B30]/10 text-[#FF3B30]' : 
+                                  item.type === 'success' ? 'bg-[#34C759]/10 text-[#34C759]' : 
+                                  'bg-primary/10 text-primary'
+                                }`}>
+                                  <item.icon size={20} />
+                                </div>
+                                <div className="space-y-1">
+                                  <h4 className="text-[14px] font-bold text-white group-hover:text-primary transition-colors">{item.title}</h4>
+                                  <p className="text-[12px] text-[#8e8e93] leading-relaxed line-clamp-2">{item.desc}</p>
+                                  <p className="text-[11px] text-[#8e8e93]/50 font-medium pt-1">{item.time}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <button className="w-full p-4 text-[13px] font-bold text-[#8e8e93] hover:text-white hover:bg-white/5 transition-all text-center">
+                          View all notifications
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <button className="p-2 text-[#8e8e93] hover:text-white transition-colors">
                 <Settings size={20} />
               </button>
