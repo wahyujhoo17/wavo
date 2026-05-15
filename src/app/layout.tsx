@@ -31,12 +31,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("dark h-full", "font-sans", geist.variable)} suppressHydrationWarning style={{ backgroundColor: '#0a0a0c' }}>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-inter antialiased min-h-screen bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container`}
       >
