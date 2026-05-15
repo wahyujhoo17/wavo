@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { Mail, ArrowRight, Github as GithubIcon, Eye, EyeOff } from 'lucide-react';
 
 const Github = ({ size = 18, ...props }: { size?: number; [key: string]: any }) => (
@@ -19,6 +20,13 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const [showPass, setShowPass] = React.useState(false);
+  const router = useRouter();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate login logic
+    router.push('/dashboard');
+  };
 
   return (
     <main className="min-h-screen bg-[#0a0a0c] flex items-center justify-center font-sans py-12 md:py-20 relative">
@@ -65,7 +73,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5" onSubmit={handleLogin}>
               <div className="space-y-2">
                 <label className="text-[11px] font-bold text-on-surface-variant/40 uppercase tracking-widest block px-1">Email Address</label>
                 <input 

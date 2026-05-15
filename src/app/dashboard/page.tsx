@@ -2,139 +2,194 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Activity, 
-  Users, 
+  Smartphone, 
   Send, 
-  CheckCircle2, 
-  AlertCircle,
+  AlertCircle, 
+  ShieldCheck,
   MoreHorizontal,
-  ExternalLink,
-  Plus
+  Plus,
+  Calendar,
+  CheckCircle2,
+  Circle,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Zap
 } from 'lucide-react';
 
-const StatCard = ({ title, value, change, icon: Icon, color }: { title: string; value: string; change: string; icon: any; color: string }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="glass-card p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all group"
-  >
-    <div className="flex justify-between items-start mb-4">
-      <div className={`p-3 rounded-2xl bg-${color}/10 text-${color} group-hover:scale-110 transition-transform duration-300`}>
-        <Icon size={24} />
-      </div>
-      <div className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg">
-        {change}
-      </div>
-    </div>
-    <p className="text-sm font-medium text-on-surface-variant/60 mb-1">{title}</p>
-    <h3 className="text-3xl font-bold text-white tracking-tighter">{value}</h3>
-  </motion.div>
+const Sparkline = ({ color }: { color: string }) => (
+  <svg width="60" height="30" viewBox="0 0 60 30" fill="none" className="ml-2">
+    <motion.path
+      d="M0 20 Q 10 5, 20 15 T 40 10 T 60 25"
+      stroke={color}
+      strokeWidth="2"
+      fill="none"
+      initial={{ pathLength: 0 }}
+      animate={{ pathLength: 1 }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
+    />
+  </svg>
 );
 
-const InstanceRow = ({ name, id, status, messages }: { name: string; id: string; status: 'online' | 'offline'; messages: string }) => (
-  <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-    <div className="flex items-center gap-4">
-      <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center font-bold text-on-surface-variant group-hover:text-primary transition-colors">
-        {name.substring(0, 2).toUpperCase()}
-      </div>
-      <div>
-        <h5 className="font-bold text-white tracking-tight">{name}</h5>
-        <p className="text-[11px] font-medium text-on-surface-variant/40 font-mono tracking-wider">{id}</p>
+const StatCard = ({ title, value, subValue, icon: Icon, color, trend }: { title: string; value: string; subValue?: string; icon: any; color: string; trend?: string }) => (
+  <div className="bg-[#1c1c1e] border border-white/[0.05] p-5 rounded-[20px] relative overflow-hidden group">
+    <div className="flex justify-between items-start mb-4">
+      <div className="text-[#8e8e93] text-[13px] font-medium tracking-tight uppercase">{title}</div>
+      <div className="p-2 bg-white/5 rounded-lg text-white">
+        <Icon size={18} />
       </div>
     </div>
-    <div className="flex items-center gap-12">
-      <div className="text-right hidden md:block">
-        <p className="text-sm font-bold text-white">{messages}</p>
-        <p className="text-[10px] font-medium text-on-surface-variant/40 uppercase tracking-widest">Messages</p>
+    <div className="flex items-end justify-between">
+      <div>
+        <div className="text-3xl font-bold tracking-tight text-white">{value}</div>
+        {subValue && <div className="text-[13px] font-medium text-[#8e8e93] mt-1">{subValue}</div>}
+        {trend && <div className={`text-[12px] font-bold mt-1 ${trend.startsWith('+') ? 'text-[#34C759]' : 'text-[#8e8e93]'}`}>{trend}</div>}
       </div>
-      <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full ${status === 'online' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500'}`}></div>
-        <span className={`text-xs font-bold uppercase tracking-widest ${status === 'online' ? 'text-emerald-500' : 'text-red-500'}`}>
-          {status}
-        </span>
-      </div>
-      <button className="p-2 text-on-surface-variant hover:text-white transition-colors">
-        <MoreHorizontal size={20} />
-      </button>
+      <Sparkline color={color} />
     </div>
   </div>
 );
 
-export default function OverviewPage() {
+const ActivityRow = ({ title, detail, time, icon: Icon, iconBg }: { title: string; detail: string; time: string; icon: any; iconBg: string }) => (
+  <div className="flex items-center justify-between py-5 border-b border-white/[0.03] last:border-none group cursor-pointer hover:bg-white/[0.01] px-2 rounded-2xl transition-all">
+    <div className="flex items-center gap-5">
+      <div className={`w-11 h-11 rounded-full flex items-center justify-center ${iconBg} shadow-sm group-hover:scale-105 transition-transform`}>
+        <Icon size={18} className="text-white" />
+      </div>
+      <div>
+        <div className="text-[15px] font-bold text-white tracking-tight leading-none mb-1.5">{title}</div>
+        <div className="text-[13px] font-medium text-[#8e8e93] leading-none">{detail}</div>
+      </div>
+    </div>
+    <div className="text-[11px] font-bold text-[#8e8e93]/50 uppercase tracking-[0.1em]">{time}</div>
+  </div>
+);
+
+export default function DashboardPage() {
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-10 pb-20">
+    <div className="p-8 max-w-[1400px] mx-auto space-y-8">
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-white tracking-tighter mb-2">System Overview</h1>
-          <p className="text-on-surface-variant font-medium">Monitoring your WhatsApp API infrastructure in real-time.</p>
+          <h1 className="text-[28px] font-bold tracking-tight text-white">Welcome back, Developer</h1>
+          <p className="text-[#8e8e93] text-[15px] font-medium mt-1">Here's an overview of your WhatsApp API infrastructure.</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:opacity-90 transition-all shadow-[0_8px_20px_rgba(var(--primary-rgb),0.3)]">
-          <Plus size={18} />
-          New Instance
+        <button className="flex items-center gap-2 bg-[#1c1c1e] border border-white/[0.05] text-[#8e8e93] px-4 py-2.5 rounded-xl font-bold text-[13px] hover:text-white transition-all shadow-sm">
+          <Calendar size={16} />
+          Last 30 Days
         </button>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Messages" value="1.2M" change="+12.5%" icon={Send} color="primary" />
-        <StatCard title="Active Instances" value="14" change="+2" icon={Layers} color="emerald-400" />
-        <StatCard title="Avg. Latency" value="142ms" change="-12ms" icon={Activity} color="amber-400" />
-        <StatCard title="Success Rate" value="99.9%" change="0.0%" icon={CheckCircle2} color="primary" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <StatCard title="Active Devices" value="3/5" icon={Smartphone} color="#cfbcff" />
+        <StatCard title="Messages Sent" value="12.4k" trend="+12% this month" icon={Send} color="#cfbcff" />
+        <StatCard title="Failed Requests" value="42" trend="-5 from last week" icon={AlertCircle} color="#ff3b30" />
+        <StatCard title="API Health" value="99.9%" subValue="• Operational" icon={ShieldCheck} color="#34c759" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Active Instances Table */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between px-2">
-            <h4 className="text-xl font-bold text-white tracking-tight">Active Instances</h4>
-            <button className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-              View All <ExternalLink size={12} />
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Analytics Card */}
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-[#1c1c1e] border border-white/[0.05] p-8 rounded-[28px] relative overflow-hidden shadow-lg">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-[19px] font-bold tracking-tight text-white">Message Analytics</h3>
+              <button className="text-[#8e8e93] hover:text-white transition-colors p-1 hover:bg-white/5 rounded-lg">
+                <MoreHorizontal size={20} />
+              </button>
+            </div>
+            
+            <div className="h-[280px] w-full relative mt-10">
+              {/* Fake Chart Illustration */}
+              <svg width="100%" height="100%" viewBox="0 0 800 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0" y2="1">
+                    <stop offset="0%" stopColor="#cfbcff" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#cfbcff" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <motion.path
+                  d="M0 150 Q 100 160, 200 130 T 400 140 T 600 100 T 800 50 L 800 200 L 0 200 Z"
+                  fill="url(#chartGradient)"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                />
+                <motion.path
+                  d="M0 150 Q 100 160, 200 130 T 400 140 T 600 100 T 800 50"
+                  stroke="#cfbcff"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 2, ease: "easeInOut" }}
+                />
+              </svg>
+            </div>
           </div>
-          <div className="glass-card rounded-[2rem] border border-white/5 bg-white/[0.01] p-4">
-            <div className="space-y-1">
-              <InstanceRow name="Marketing Team" id="WAVO-INS-7812" status="online" messages="42.8k" />
-              <InstanceRow name="Customer Support" id="WAVO-INS-2109" status="online" messages="128.4k" />
-              <InstanceRow name="System Alerts" id="WAVO-INS-0042" status="online" messages="12.1k" />
-              <InstanceRow name="Verification Bot" id="WAVO-INS-9921" status="offline" messages="85.2k" />
+
+          {/* Recent Activity */}
+          <div className="bg-[#1c1c1e] border border-white/[0.05] p-8 rounded-[28px] shadow-lg">
+            <h3 className="text-[19px] font-bold tracking-tight text-white mb-6">Recent Activity</h3>
+            <div className="space-y-0.5">
+              <ActivityRow 
+                title="Incoming Message" 
+                detail="from: +1 (555) 819-2834" 
+                time="2 MIN AGO" 
+                icon={ArrowDownLeft} 
+                iconBg="bg-[#cfbcff]" 
+              />
+              <ActivityRow 
+                title="Webhook Triggered" 
+                detail="POST /api/v1/callback" 
+                time="15 MIN AGO" 
+                icon={Zap} 
+                iconBg="bg-[#ffcc00]" 
+              />
+              <ActivityRow 
+                title="API Rate Limit Hit" 
+                detail="Device ID: 8A9B2C" 
+                time="1 HR AGO" 
+                icon={AlertCircle} 
+                iconBg="bg-[#ff3b30]" 
+              />
             </div>
           </div>
         </div>
 
-        {/* System Health / Quick Actions */}
+        {/* Quick Start Card */}
         <div className="space-y-6">
-          <h4 className="text-xl font-bold text-white tracking-tight px-2">System Health</h4>
-          <div className="glass-card rounded-[2rem] border border-white/5 bg-white/[0.01] p-8 space-y-8">
-            <div className="space-y-4">
-              <div className="flex justify-between items-end mb-1">
-                <span className="text-sm font-bold text-white/80">CPU Usage</span>
-                <span className="text-xs font-bold text-emerald-400">24%</span>
+          <div className="bg-[#1c1c1e] border border-white/[0.05] p-8 rounded-[24px] relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-all duration-700" />
+            
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+              <Zap size={24} fill="currentColor" fillOpacity="0.2" />
+            </div>
+            
+            <h3 className="text-[20px] font-bold tracking-tight text-white mb-3">Quick Start</h3>
+            <p className="text-[14px] text-[#8e8e93] font-medium leading-relaxed mb-8">
+              You haven't fully utilized your current plan. Set up a new WhatsApp service instance in minutes.
+            </p>
+            
+            <div className="space-y-5 mb-10">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={18} className="text-primary" />
+                <span className="text-[14px] font-bold text-white/80">Create Instance</span>
               </div>
-              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 w-[24%]" />
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={18} className="text-primary" />
+                <span className="text-[14px] font-bold text-white/80">Scan QR Code</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Circle size={18} className="text-[#8e8e93]/30" />
+                <span className="text-[14px] font-bold text-[#8e8e93]">Send first message</span>
               </div>
             </div>
             
-            <div className="space-y-4">
-              <div className="flex justify-between items-end mb-1">
-                <span className="text-sm font-bold text-white/80">Memory (RAM)</span>
-                <span className="text-xs font-bold text-amber-400">62%</span>
-              </div>
-              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-500 w-[62%]" />
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-3">
-                <AlertCircle size={20} className="text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">System Update</p>
-                  <p className="text-[13px] text-on-surface-variant font-medium leading-tight">Wavo Engine v2.1-beta is now available for manual upgrade.</p>
-                </div>
-              </div>
-            </div>
+            <button className="w-full bg-[#cfbcff] text-[#381e72] py-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-[0_0_25px_rgba(207,188,255,0.15)]">
+              <Plus size={18} />
+              Create Service
+            </button>
           </div>
         </div>
       </div>

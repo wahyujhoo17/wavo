@@ -1,29 +1,51 @@
 "use client";
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
-  Layers, 
-  MessageSquare, 
-  Webhook, 
+  Smartphone, 
   Key, 
+  Webhook, 
+  ClipboardList, 
+  FileText, 
   Settings, 
+  HelpCircle,
   LogOut,
-  ChevronRight,
   Search,
-  Bell
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Plus
 } from 'lucide-react';
 
-const SidebarLink = ({ href, icon: Icon, label, active = false }: { href: string; icon: any; label: string; active?: boolean }) => (
+const SidebarLink = ({ href, icon: Icon, label, active = false, minimized = false }: { href: string; icon: any; label: string; active?: boolean; minimized?: boolean }) => (
   <Link href={href}>
-    <div className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${active ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:text-on-surface hover:bg-white/5'}`}>
-      <div className="flex items-center gap-3">
-        <Icon size={20} className={active ? 'text-primary' : 'text-on-surface-variant group-hover:text-on-surface'} />
-        <span className="text-sm font-semibold tracking-tight">{label}</span>
-      </div>
-      {active && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.6)]"></div>}
+    <div className={`flex items-center gap-3.5 transition-all duration-200 group relative h-12 ${active ? 'text-white' : 'text-[#8e8e93] hover:text-white'} ${minimized ? 'justify-center px-0' : 'px-6'}`}>
+      {active && (
+        <motion.div 
+          layoutId="sidebar-active-indicator"
+          className="absolute left-0 w-[3px] h-6 bg-primary rounded-r-full"
+        />
+      )}
+      <Icon size={20} className={active ? 'text-primary' : 'text-[#8e8e93] group-hover:text-white transition-colors'} />
+      {!minimized && (
+        <motion.span 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-[15px] font-medium tracking-tight whitespace-nowrap"
+        >
+          {label}
+        </motion.span>
+      )}
+      {minimized && (
+        <div className="absolute left-full ml-4 px-2 py-1 bg-[#1c1c1e] text-white text-[12px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/5">
+          {label}
+        </div>
+      )}
     </div>
   </Link>
 );
@@ -33,88 +55,155 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMinimized, setIsMinimized] = React.useState(false);
+
   return (
-    <div className="flex h-screen bg-[#050505] text-on-surface overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#0a0a0c] text-white overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-72 h-full border-r border-white/5 flex flex-col p-6 shrink-0 bg-[#080808]/50 backdrop-blur-xl relative z-30">
-        <div className="mb-10 px-2 flex items-center justify-between">
-          <Link href="/dashboard">
+      <motion.aside 
+        animate={{ width: isMinimized ? 80 : 280 }}
+        className={`
+          fixed inset-y-0 left-0 z-50 bg-[#0c0c0e] border-r border-white/[0.05] flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        <div className={`px-6 pt-6 pb-12 flex items-center ${isMinimized ? 'justify-center px-0' : 'justify-between'}`}>
+          <Link href="/dashboard" className={`relative block transition-all duration-300 ${isMinimized ? 'w-10 h-10' : 'w-[140px] h-[40px]'}`}>
             <Image 
-              src="/img/logo/fulllogo.png" 
+              src={isMinimized ? "/img/logo/logo.png" : "/img/logo/fulllogo.png"}
               alt="Wavo Logo" 
-              width={100} 
-              height={28} 
+              fill
+              sizes={isMinimized ? "40px" : "140px"}
               className="object-contain"
-              style={{ width: 'auto', height: 'auto' }}
+              priority
             />
           </Link>
-          <div className="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary uppercase">Beta</div>
-        </div>
-
-        <div className="flex-1 space-y-8">
-          <div>
-            <h5 className="px-4 mb-4 text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant/40">Main Menu</h5>
-            <nav className="space-y-1">
-              <SidebarLink href="/dashboard" icon={LayoutDashboard} label="Overview" active />
-              <SidebarLink href="/dashboard/instances" icon={Layers} label="Instances" />
-              <SidebarLink href="/dashboard/messages" icon={MessageSquare} label="Message Logs" />
-            </nav>
-          </div>
-
-          <div>
-            <h5 className="px-4 mb-4 text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant/40">Configuration</h5>
-            <nav className="space-y-1">
-              <SidebarLink href="/dashboard/webhooks" icon={Webhook} label="Webhooks" />
-              <SidebarLink href="/dashboard/api-keys" icon={Key} label="API Keys" />
-            </nav>
-          </div>
-        </div>
-
-        <div className="pt-6 border-t border-white/5 space-y-1">
-          <SidebarLink href="/dashboard/settings" icon={Settings} label="Settings" />
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-red-400 hover:bg-red-400/5 transition-all duration-200">
-            <LogOut size={20} />
-            <span className="text-sm font-semibold tracking-tight">Logout</span>
+          
+          {/* Toggle Button - Now positioned on the border */}
+          <button 
+            onClick={() => setIsMinimized(!isMinimized)}
+            className={`
+              absolute -right-3 top-12 w-6 h-6 rounded-full bg-[#1c1c1e] border border-white/10 text-[#8e8e93] hover:text-white flex items-center justify-center transition-all z-[60] shadow-xl
+              lg:flex hidden
+            `}
+          >
+            {isMinimized ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
         </div>
-      </aside>
+
+        <nav className="flex-1 space-y-1">
+          <SidebarLink href="/dashboard" icon={LayoutDashboard} label="Dashboard" active={pathname === '/dashboard'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/services" icon={Smartphone} label="WhatsApp Services" active={pathname === '/dashboard/services'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/api-keys" icon={Key} label="API Keys" active={pathname === '/dashboard/api-keys'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/webhooks" icon={Webhook} label="Webhooks" active={pathname === '/dashboard/webhooks'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/logs" icon={ClipboardList} label="Logs" active={pathname === '/dashboard/logs'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/docs" icon={FileText} label="Documentation" active={pathname === '/dashboard/docs'} minimized={isMinimized} />
+          <SidebarLink href="/dashboard/settings" icon={Settings} label="Settings" active={pathname === '/dashboard/settings'} minimized={isMinimized} />
+        </nav>
+
+        <div className={`p-6 space-y-6 ${isMinimized ? 'px-4' : ''}`}>
+          {!isMinimized ? (
+            <button className="w-full bg-[#cfbcff] text-[#381e72] py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(207,188,255,0.2)] hover:opacity-90 transition-all">
+              Upgrade Plan
+            </button>
+          ) : (
+            <button className="w-full h-12 bg-[#cfbcff] text-[#381e72] flex items-center justify-center rounded-xl font-bold hover:opacity-90 transition-all group relative">
+              <Plus size={20} />
+              <div className="absolute left-full ml-4 px-2 py-1 bg-[#cfbcff] text-[#381e72] text-[12px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                Upgrade
+              </div>
+            </button>
+          )}
+          
+          <div className="pt-6 border-t border-white/[0.05] space-y-1">
+            <Link href="/dashboard/help" className={`flex items-center gap-3.5 py-3 text-[#8e8e93] hover:text-white transition-all group relative ${isMinimized ? 'justify-center px-0' : 'px-2'}`}>
+              <HelpCircle size={20} className="group-hover:text-white transition-colors" />
+              {!isMinimized && <span className="text-[15px] font-medium">Help</span>}
+              {isMinimized && (
+                <div className="absolute left-full ml-4 px-2 py-1 bg-[#1c1c1e] text-white text-[12px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/5">
+                  Help
+                </div>
+              )}
+            </Link>
+            <button 
+              onClick={() => router.push('/login')}
+              className={`w-full flex items-center gap-3.5 py-3 text-[#8e8e93] hover:text-white transition-all group relative ${isMinimized ? 'justify-center px-0' : 'px-2'}`}
+            >
+              <LogOut size={20} className="group-hover:text-white transition-colors" />
+              {!isMinimized && <span className="text-[15px] font-medium">Sign Out</span>}
+              {isMinimized && (
+                <div className="absolute left-full ml-4 px-2 py-1 bg-[#1c1c1e] text-white text-[12px] rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/5">
+                  Sign Out
+                </div>
+              )}
+            </button>
+          </div>
+        </div>
+      </motion.aside>
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col relative z-10 overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 border-b border-white/5 flex items-center justify-between px-10 shrink-0 bg-[#050505]/50 backdrop-blur-md">
-          <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl px-4 py-2 w-96 group focus-within:border-primary/50 transition-all">
-            <Search size={18} className="text-on-surface-variant/50 group-focus-within:text-primary transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search instances, messages..." 
-              className="bg-transparent border-none text-sm focus:outline-none w-full text-white placeholder:text-on-surface-variant/30 font-medium"
-            />
+        <header className="h-[72px] border-b border-white/[0.05] flex items-center justify-between px-8 shrink-0 bg-[#0a0a0c]/80 backdrop-blur-xl">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 text-[#8e8e93] hover:text-white"
+            >
+              <Menu size={24} />
+            </button>
+            <div className="hidden md:flex items-center gap-3 bg-[#1c1c1e] border border-white/[0.05] rounded-xl px-4 py-2 w-[400px] group focus-within:border-primary/50 transition-all">
+              <Search size={18} className="text-[#8e8e93] group-focus-within:text-primary transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search resources..." 
+                className="bg-transparent border-none text-[14px] focus:outline-none w-full text-white placeholder:text-[#8e8e93]/40 font-medium"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <button className="relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/5 text-on-surface-variant transition-all">
-              <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-[#050505]"></span>
-            </button>
-            <div className="h-8 w-[1px] bg-white/5 mx-2"></div>
-            <div className="flex items-center gap-3 pl-2 group cursor-pointer">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-white tracking-tight">John Doe</p>
-                <p className="text-[10px] font-medium text-on-surface-variant/60 uppercase tracking-widest">Developer Plan</p>
-              </div>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-[#a882ff] p-[1px]">
-                <div className="w-full h-full rounded-[11px] bg-[#050505] flex items-center justify-center font-bold text-primary text-sm">JD</div>
-              </div>
-            </div>
+          <div className="flex items-center gap-8">
+            <Link href="/dashboard" className="text-[14px] font-bold text-white relative after:absolute after:bottom-[-26px] after:left-0 after:w-full after:h-[2px] after:bg-primary">
+              Dashboard
+            </Link>
+            <Link href="/docs" className="text-[14px] font-bold text-[#8e8e93] hover:text-white transition-colors">
+              Docs
+            </Link>
           </div>
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {children}
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#0a0a0c]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="min-h-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
+      
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
