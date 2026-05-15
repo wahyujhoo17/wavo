@@ -21,8 +21,8 @@
   --color-error: #ffb4ab;
   --color-on-error: #690005;
 
-  --font-inter: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-inter: var(--font-inter);
+  --font-mono: var(--font-mono);
 
   --spacing-gutter: 24px;
   --spacing-container-max: 1280px;

@@ -4,16 +4,16 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -30,9 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("dark h-full", "font-sans", geist.variable)} suppressHydrationWarning style={{ backgroundColor: '#0a0a0c' }}>
+    <html lang="en" className={cn("dark h-full", inter.variable, jetbrainsMono.variable)} suppressHydrationWarning style={{ backgroundColor: '#0a0a0c' }}>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-inter antialiased min-h-screen bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container`}
+        className="font-inter antialiased min-h-screen bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container"
       >
         <ThemeProvider
           attribute="class"

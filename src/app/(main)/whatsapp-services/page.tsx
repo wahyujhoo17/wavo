@@ -148,8 +148,40 @@ const ServiceCard = ({ name, id, status, statusText, details, actionLabel, actio
     </div>
   );
 };
+import { toast } from '@/lib/toast';
+
+const SkeletonCard = () => (
+  <div className="bg-[#1c1c1e] border border-white/[0.05] p-8 rounded-[32px] space-y-6 relative overflow-hidden">
+    <div className="flex justify-between items-start">
+      <div className="w-14 h-14 rounded-2xl bg-white/5 animate-pulse" />
+      <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
+    </div>
+    <div className="space-y-3">
+      <div className="h-6 bg-white/5 rounded-lg w-1/2 animate-pulse" />
+      <div className="h-4 bg-white/5 rounded-lg w-3/4 animate-pulse" />
+    </div>
+    <div className="pt-6 border-t border-white/[0.05] flex justify-between">
+      <div className="h-4 bg-white/5 rounded-lg w-1/4 animate-pulse" />
+      <div className="h-4 bg-white/5 rounded-lg w-1/4 animate-pulse" />
+    </div>
+  </div>
+);
 
 export default function WhatsAppServicesPage() {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [hasData, setHasData] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCreate = () => {
+    setIsModalOpen(false);
+    toast.success("Instance Created", "WhatsApp service initialized. You can now scan the QR code.");
+  };
+
   return (
     <div className="p-8 max-w-[1400px] mx-auto space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -159,50 +191,147 @@ export default function WhatsAppServicesPage() {
             Manage your WhatsApp API instances, check connection status, and monitor message volume.
           </p>
         </div>
-        <button className="bg-[#00c896] text-[#000] px-6 py-3 rounded-xl font-bold text-[15px] flex items-center gap-2 hover:opacity-90 transition-all shadow-[0_0_25px_rgba(0,200,150,0.2)]">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-[#00c896] text-[#000] px-6 py-3 rounded-xl font-bold text-[15px] flex items-center gap-2 hover:opacity-90 transition-all shadow-[0_0_25px_rgba(0,200,150,0.2)]"
+        >
           <Plus size={20} />
           Create New Service
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ServiceCard 
-          name="Marketing Bot"
-          id="srv_mk_9821"
-          status="connected"
-          statusText="• Connected"
-          details={[
-            { label: 'Number', value: '+1 (555) 819-2834' },
-            { label: 'Volume (Cycle)', value: '12,485 msg' }
-          ]}
-          actionLabel="Disconnect"
-          actionIcon={LogOut}
-          showDelete={true}
-        />
+      <AnimatePresence>
+        {isModalOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6"
+            >
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-[500px] bg-[#1c1c1e] border border-white/10 rounded-[32px] p-8 shadow-2xl relative overflow-hidden"
+              >
+                {/* Background glow */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#00c896]/10 rounded-full blur-3xl" />
+                
+                <div className="relative">
+                  <h2 className="text-[24px] font-bold text-white mb-2">Create New Service</h2>
+                  <p className="text-[14px] text-[#8e8e93] mb-8">Initialize a new WhatsApp instance for your application.</p>
+                  
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-[#8e8e93] uppercase tracking-wider block px-1">Service Name</label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Support Bot"
+                        className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#00c896]/40 transition-all"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-[12px] font-bold text-[#8e8e93] uppercase tracking-wider block px-1">Device Phone Number</label>
+                      <input 
+                        type="tel" 
+                        placeholder="+1 (555) 000-0000"
+                        className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#00c896]/40 transition-all"
+                      />
+                    </div>
 
-        <ServiceCard 
-          name="Support Channel"
-          id="srv_sp_4412"
-          status="qr"
-          statusText="QR Ready"
-          isQR={true}
-          actionLabel="Connect"
-          showDelete={true}
-        />
+                    <div className="pt-4 flex gap-4">
+                      <button 
+                        onClick={() => setIsModalOpen(false)}
+                        className="flex-1 py-3.5 px-6 rounded-xl font-bold text-[14px] text-[#8e8e93] bg-white/5 hover:bg-white/10 transition-all"
+                      >
+                        Cancel
+                      </button>
+                      <button className="flex-1 py-3.5 px-6 rounded-xl font-bold text-[14px] text-black bg-[#00c896] hover:opacity-90 transition-all">
+                        Create Instance
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
-        <ServiceCard 
-          name="Legacy Integration"
-          id="srv_lg_1802"
-          status="disconnected"
-          statusText="Disconnected"
-          details={[
-            { label: 'Last Active', value: '2 days ago' },
-            { label: 'Volume (Cycle)', value: '42 msg' }
-          ]}
-          actionLabel="Reconnect"
-          showDelete={true}
-        />
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      ) : !hasData ? (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-24 bg-[#1c1c1e] border border-white/[0.05] rounded-[40px] text-center"
+        >
+          <div className="w-24 h-24 rounded-[32px] bg-white/5 flex items-center justify-center text-[#8e8e93] mb-8">
+            <Smartphone size={48} />
+          </div>
+          <h3 className="text-[22px] font-bold text-white mb-2">No Services Connected</h3>
+          <p className="text-[#8e8e93] max-w-[420px] mb-10 leading-relaxed font-medium">
+            Start by creating your first WhatsApp service instance to enable API messaging and real-time event monitoring.
+          </p>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2.5 text-[#00c896] font-bold text-[15px] hover:underline"
+          >
+            <Plus size={20} strokeWidth={3} />
+            Connect Your First Device
+          </button>
+        </motion.div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ServiceCard 
+            name="Marketing Bot"
+            id="srv_mk_9821"
+            status="connected"
+            statusText="• Connected"
+            details={[
+              { label: 'Number', value: '+1 (555) 819-2834' },
+              { label: 'Volume (Cycle)', value: '12,485 msg' }
+            ]}
+            actionLabel="Disconnect"
+            actionIcon={LogOut}
+            showDelete={true}
+            onAction={() => toast.success("Success", "Marketing Bot disconnected.")}
+          />
+
+          <ServiceCard 
+            name="Support Channel"
+            id="srv_sp_4412"
+            status="qr"
+            statusText="QR Ready"
+            isQR={true}
+            actionLabel="Connect"
+            showDelete={true}
+            onAction={() => toast.info("Status", "Opening QR Scan interface...")}
+          />
+
+          <ServiceCard 
+            name="Legacy Integration"
+            id="srv_lg_1802"
+            status="disconnected"
+            statusText="Disconnected"
+            details={[
+              { label: 'Last Active', value: '2 days ago' },
+              { label: 'Volume (Cycle)', value: '42 msg' }
+            ]}
+            actionLabel="Reconnect"
+            showDelete={true}
+            onAction={() => toast.error("Error", "Failed to reconnect. Please re-scan.")}
+          />
+        </div>
+      )}
     </div>
   );
 }

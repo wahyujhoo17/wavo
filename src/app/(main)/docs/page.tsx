@@ -99,38 +99,38 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   return (
     <div className="flex min-h-screen">
       {/* Main Doc Content */}
-      <div className="flex-1 max-w-[1000px] p-12 mx-auto">
+      <div className="flex-1 max-w-[1000px] p-6 md:p-12 mx-auto overflow-hidden">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-[13px] font-medium text-[#8e8e93] mb-8">
+        <div className="flex flex-wrap items-center gap-2 text-[12px] md:text-[13px] font-medium text-[#8e8e93] mb-8">
           <span>Documentation</span>
-          <ChevronRight size={14} />
+          <ChevronRight size={14} className="shrink-0" />
           <span>Core Concepts</span>
-          <ChevronRight size={14} />
+          <ChevronRight size={14} className="shrink-0" />
           <span className="text-white">Webhooks</span>
         </div>
 
         {/* Header */}
-        <div className="space-y-4 mb-12">
-          <h1 className="text-[48px] font-bold tracking-tight text-white">Webhooks</h1>
-          <p className="text-[18px] text-[#8e8e93] leading-relaxed max-w-[800px]">
+        <div className="space-y-4 mb-10 md:mb-12">
+          <h1 className="text-[32px] md:text-[48px] font-bold tracking-tight text-white leading-tight">Webhooks</h1>
+          <p className="text-[16px] md:text-[18px] text-[#8e8e93] leading-relaxed max-w-[800px]">
             Webhooks allow you to build or set up integrations that subscribe to certain events on DeVOS WhatsApp. When one of those events is triggered, we'll send a HTTP POST payload to the webhook's configured URL.
           </p>
         </div>
 
         {/* Section: Introduction */}
-        <section id="introduction" className="space-y-6 mb-12">
-          <h2 className="text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Introduction</h2>
-          <p className="text-[15px] text-[#8e8e93] leading-relaxed">
+        <section id="introduction" className="space-y-6 mb-10 md:mb-12">
+          <h2 className="text-[24px] md:text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Introduction</h2>
+          <p className="text-[14px] md:text-[15px] text-[#8e8e93] leading-relaxed">
             Instead of requiring you to pull information via our API, webhooks push information to your endpoint as it happens. This is significantly more efficient for both your systems and ours, especially for high-volume message processing.
           </p>
 
-          <div className="bg-[#cfbcff]/10 border border-[#cfbcff]/20 p-6 rounded-2xl flex gap-4">
+          <div className="bg-[#cfbcff]/10 border border-[#cfbcff]/20 p-5 md:p-6 rounded-2xl flex gap-4">
             <div className="w-10 h-10 rounded-full bg-[#cfbcff]/10 flex items-center justify-center text-[#cfbcff] shrink-0">
               <Info size={20} />
             </div>
             <div className="space-y-1">
-              <h4 className="text-[15px] font-bold text-white">Webhook Delivery Guarantees</h4>
-              <p className="text-[14px] text-[#8e8e93] leading-relaxed">
+              <h4 className="text-[14px] md:text-[15px] font-bold text-white">Webhook Delivery Guarantees</h4>
+              <p className="text-[13px] md:text-[14px] text-[#8e8e93] leading-relaxed">
                 DeVOS employs an exponential backoff strategy for webhook delivery. If your server returns a non-2xx status code, we will retry delivering the payload up to 5 times over a 24-hour period.
               </p>
             </div>
@@ -138,39 +138,36 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
         </section>
 
         {/* Section: Verifying Signatures */}
-        <section id="verifying-signatures" className="space-y-6 mb-12">
-          <h2 className="text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Verifying Signatures</h2>
-          <p className="text-[15px] text-[#8e8e93] leading-relaxed">
+        <section id="verifying-signatures" className="space-y-6 mb-10 md:mb-12">
+          <h2 className="text-[24px] md:text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Verifying Signatures</h2>
+          <p className="text-[14px] md:text-[15px] text-[#8e8e93] leading-relaxed">
             To ensure that a webhook payload was actually sent by DeVOS and wasn't tampered with during transit, we sign all webhook events. We include a <code className="bg-white/5 px-1.5 py-0.5 rounded text-[#cfbcff]">x-devos-signature</code> header with every request.
-          </p>
-          <p className="text-[15px] text-[#8e8e93] leading-relaxed">
-            The signature is an HMAC hex digest generated using your Webhook Secret Key and the raw request body payload. Below is an example of how to verify this signature using Node.js.
           </p>
           <CodeBlock language="NODE.JS (EXPRESS)" code={webhookCode} />
         </section>
 
         {/* Section: Event Payloads */}
-        <section id="event-payloads" className="space-y-6 mb-12">
-          <h2 className="text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Event Payloads</h2>
-          <p className="text-[15px] text-[#8e8e93] leading-relaxed">
-            Every webhook payload contains a standard envelope with a <code className="bg-white/5 px-1.5 py-0.5 rounded text-[#cfbcff]">type</code> field identifying the event. Below are examples of common event types.
+        <section id="event-payloads" className="space-y-6 mb-10 md:mb-12">
+          <h2 className="text-[24px] md:text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Event Payloads</h2>
+          <p className="text-[14px] md:text-[15px] text-[#8e8e93] leading-relaxed">
+            Every webhook payload contains a standard envelope with a <code className="bg-white/5 px-1.5 py-0.5 rounded text-[#cfbcff]">type</code> field Identifying the event. Below are examples of common event types.
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#FFCC00]" />
-                <span className="text-[13px] font-bold font-mono text-white">message.received</span>
+                <span className="text-[12px] md:text-[13px] font-bold font-mono text-white">message.received</span>
               </div>
-              <div className="bg-[#0c0c0e] border border-white/[0.05] rounded-xl p-4 overflow-x-auto">
+              <div className="bg-[#0c0c0e] border border-white/[0.05] rounded-xl p-4 overflow-x-auto custom-scrollbar">
                 <pre className="text-[12px] font-mono leading-relaxed text-[#8e8e93]"><code>{payloadReceived}</code></pre>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#cfbcff]" />
-                <span className="text-[13px] font-bold font-mono text-white">message.status.delivered</span>
+                <span className="text-[12px] md:text-[13px] font-bold font-mono text-white">message.status.delivered</span>
               </div>
-              <div className="bg-[#0c0c0e] border border-white/[0.05] rounded-xl p-4 overflow-x-auto">
+              <div className="bg-[#0c0c0e] border border-white/[0.05] rounded-xl p-4 overflow-x-auto custom-scrollbar">
                 <pre className="text-[12px] font-mono leading-relaxed text-[#8e8e93]"><code>{payloadStatus}</code></pre>
               </div>
             </div>
@@ -178,45 +175,45 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
         </section>
 
         {/* Section: Expected Responses */}
-        <section id="expected-responses" className="space-y-6 mb-12">
-          <h2 className="text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Expected Responses</h2>
-          <p className="text-[15px] text-[#8e8e93] leading-relaxed mb-6">
-            Your endpoint must respond with a standard HTTP status code to acknowledge receipt of the webhook. Any response outside the 2xx range will be considered a failure, and the delivery will be retried.
+        <section id="expected-responses" className="space-y-6 mb-10 md:mb-12">
+          <h2 className="text-[24px] md:text-[28px] font-bold text-white border-b border-white/[0.05] pb-3 mb-6">Expected Responses</h2>
+          <p className="text-[14px] md:text-[15px] text-[#8e8e93] leading-relaxed mb-6">
+            Your endpoint must respond with a standard HTTP status code to acknowledge receipt of the webhook.
           </p>
-          <div className="bg-[#1c1c1e] border border-white/[0.05] rounded-xl overflow-hidden">
-            <table className="w-full text-left">
+          <div className="bg-[#1c1c1e] border border-white/[0.05] rounded-xl overflow-hidden shadow-inner overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left min-w-[500px]">
               <thead>
                 <tr className="border-b border-white/[0.05] bg-white/[0.02]">
-                  <th className="px-6 py-4 text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Status Code</th>
-                  <th className="px-6 py-4 text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Meaning & Action</th>
+                  <th className="px-6 py-4 text-[11px] md:text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Status Code</th>
+                  <th className="px-6 py-4 text-[11px] md:text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Meaning & Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.02]">
                 <tr>
                   <td className="px-6 py-4">
-                    <span className="text-[11px] font-bold px-2 py-1 bg-[#34C759]/10 text-[#34C759] border border-[#34C759]/20 rounded-lg uppercase tracking-wider">200 OK</span>
+                    <span className="text-[10px] md:text-[11px] font-bold px-2 py-1 bg-[#34C759]/10 text-[#34C759] border border-[#34C759]/20 rounded-lg uppercase tracking-wider">200 OK</span>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-[14px] font-bold text-white mb-1">Successful Receipt</p>
-                    <p className="text-[13px] text-[#8e8e93]">Acknowledges successful delivery. No further retries will be attempted.</p>
+                    <p className="text-[13px] md:text-[14px] font-bold text-white mb-1">Successful Receipt</p>
+                    <p className="text-[12px] md:text-[13px] text-[#8e8e93]">Acknowledges successful delivery. No further retries will be attempted.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-[10px] md:text-[11px] font-bold px-2 py-1 bg-[#FFCC00]/10 text-[#FFCC00] border border-[#FFCC00]/20 rounded-lg uppercase tracking-wider">400, 401, 404</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <p className="text-[13px] md:text-[14px] font-bold text-white mb-1">Client Errors</p>
+                    <p className="text-[12px] md:text-[13px] text-[#8e8e93]">Indicates an issue with your endpoint. Retries will follow schedule.</p>
                   </td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4">
-                    <span className="text-[11px] font-bold px-2 py-1 bg-[#FFCC00]/10 text-[#FFCC00] border border-[#FFCC00]/20 rounded-lg uppercase tracking-wider">400, 401, 404</span>
+                    <span className="text-[10px] md:text-[11px] font-bold px-2 py-1 bg-[#FF3B30]/10 text-[#FF3B30] border border-[#FF3B30]/20 rounded-lg uppercase tracking-wider">5xx Error</span>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-[14px] font-bold text-white mb-1">Client Errors</p>
-                    <p className="text-[13px] text-[#8e8e93]">Indicates an issue with your endpoint (e.g., unauthorized, not found). Retries will follow backoff schedule.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4">
-                    <span className="text-[11px] font-bold px-2 py-1 bg-[#FF3B30]/10 text-[#FF3B30] border border-[#FF3B30]/20 rounded-lg uppercase tracking-wider">5xx Server Error</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-[14px] font-bold text-white mb-1">Endpoint Failure</p>
-                    <p className="text-[13px] text-[#8e8e93]">Your server failed to process the request. DeVOS will retry the delivery.</p>
+                    <p className="text-[13px] md:text-[14px] font-bold text-white mb-1">Endpoint Failure</p>
+                    <p className="text-[12px] md:text-[13px] text-[#8e8e93]">Your server failed. DeVOS will retry the delivery automatically.</p>
                   </td>
                 </tr>
               </tbody>
@@ -225,16 +222,16 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
         </section>
 
         {/* Footer Nav */}
-        <div className="flex justify-between items-center pt-12 border-t border-white/[0.05] mt-12">
-          <button className="flex flex-col gap-2 group">
-            <span className="text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest text-left">Previous</span>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-8 pt-10 md:pt-12 border-t border-white/[0.05] mt-12 mb-8">
+          <button className="flex flex-col items-center sm:items-start gap-2 group w-full sm:w-auto">
+            <span className="text-[11px] md:text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Previous</span>
             <span className="flex items-center gap-2 text-white font-bold group-hover:text-[#cfbcff] transition-colors">
               <ArrowLeft size={16} />
               Authentication
             </span>
           </button>
-          <button className="flex flex-col gap-2 group text-right">
-            <span className="text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Next</span>
+          <button className="flex flex-col items-center sm:items-end gap-2 group text-right w-full sm:w-auto">
+            <span className="text-[11px] md:text-[12px] font-bold text-[#8e8e93] uppercase tracking-widest">Next</span>
             <span className="flex items-center gap-2 text-white font-bold group-hover:text-[#cfbcff] transition-colors">
               Message Templates
               <ArrowRight size={16} />

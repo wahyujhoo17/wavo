@@ -75,6 +75,18 @@ export default function DashboardLayout({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMinimized, setIsMinimized] = React.useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+  const [toast, setToast] = React.useState<{ title: string, message: string, type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Global toast listener
+  React.useEffect(() => {
+    const handleToast = (event: any) => {
+      setToast(event.detail);
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    };
+    window.addEventListener('show-toast', handleToast);
+    return () => window.removeEventListener('show-toast', handleToast);
+  }, []);
 
   return (
     <div className="flex h-screen bg-[#0a0a0c] text-white overflow-hidden font-sans">
@@ -277,10 +289,34 @@ export default function DashboardLayout({
           </div>
         </header>
 
+        {/* Top Glow Progress Bar */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`progress-${pathname}`}
+            initial={{ width: "0%", opacity: 0 }}
+            animate={{ width: "100%", opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent z-[100] shadow-[0_0_15px_rgba(207,188,255,0.8)]"
+          />
+        </AnimatePresence>
+
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#0a0a0c]">
           <div className="min-h-full">
-            {children}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, scale: 0.99, filter: "blur(4px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 1.01, filter: "blur(4px)" }}
+                transition={{ 
+                  duration: 0.4, 
+                  ease: [0.22, 1, 0.36, 1] // Custom cubic-bezier for premium feel
+                }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </main>
@@ -295,6 +331,35 @@ export default function DashboardLayout({
             onClick={() => setIsMobileMenuOpen(false)}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           />
+        )}
+      </AnimatePresence>
+      {/* Global Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-8 right-8 z-[1000] flex items-center gap-3 bg-[#1c1c1e] border border-white/10 px-6 py-4 rounded-2xl shadow-2xl min-w-[300px]"
+          >
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              toast.type === 'success' ? 'bg-[#34C759]/10 text-[#34C759]' : 
+              toast.type === 'error' ? 'bg-[#FF3B30]/10 text-[#FF3B30]' : 
+              'bg-[#cfbcff]/10 text-[#cfbcff]'
+            }`}>
+              {toast.type === 'success' ? <ShieldCheck size={20} /> : <Activity size={20} />}
+            </div>
+            <div className="flex-1">
+              <p className="text-[14px] font-bold text-white">{toast.title}</p>
+              <p className="text-[12px] text-[#8e8e93] font-medium">{toast.message}</p>
+            </div>
+            <button 
+              onClick={() => setToast(null)}
+              className="text-[#8e8e93] hover:text-white transition-colors"
+            >
+              <LogOut size={16} className="rotate-90" />
+            </button>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
